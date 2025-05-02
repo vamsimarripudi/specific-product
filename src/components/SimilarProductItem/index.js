@@ -6,8 +6,12 @@ const SimilarProductItem = props => {
   const {title, brand, rating, imageUrl, price} = productDetails
 
   return (
-    <li>
-      <img src={imageUrl} alt={`similar product ${title}`} />
+    <li className="list-style-product">
+      <img
+        src={imageUrl}
+        alt={`similar product ${title}`}
+        className="similar-photo"
+      />
       <p>{title}</p>
       <p>by{brand}</p>
 

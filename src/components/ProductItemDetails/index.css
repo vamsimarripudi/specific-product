@@ -1,1 +1,36 @@
 /* Write your CSS here */
+
+.loader-element {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bg-container {
+  display: flex;
+  height: 100dvh;
+  justify-content: center;
+  background-size: cover;
+  margin: 50px;
+}
+
+.product-image {
+  height: 300px;
+  width: 300px;
+}
+
+.product-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.products-data-container {
+  display: flex;
+  margin: 10px;
+}
+
+.unordered-list-similar-products {
+  list-style-type: none;
+  display: flex;
+  justify-content: space-evenly;
+}

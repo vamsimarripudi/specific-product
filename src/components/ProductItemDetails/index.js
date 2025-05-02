@@ -7,24 +7,25 @@ import {BsDashSquare, BsPlusSquare} from 'react-icons/bs'
 
 import SimilarProductItem from '../SimilarProductItem'
 import Header from '../Header'
+import './index.css'
 
-const apiStatusView = {
-  success: 'SUCCESS',
-  inProgress: 'IN_PROGRESS',
-  failure: 'FAILURE',
+const apiStatusConstants = {
   initial: 'INITIAL',
+  success: 'SUCCESS',
+  failure: 'FAILURE',
+  inProgress: 'IN_PROGRESS',
 }
 
 class ProductItemDetails extends Component {
   state = {
-    productList: {},
-    apiStatus: apiStatusView.initial,
+    productData: {},
+    apiStatus: apiStatusConstants.initial,
     quantity: 1,
     similarProducts: [],
   }
 
   componentDidMount() {
-    this.getProducts()
+    this.getProductsData()
   }
 
   getFormattedData = data => ({
@@ -39,12 +40,12 @@ class ProductItemDetails extends Component {
     price: data.price,
   })
 
-  getProducts = async () => {
+  getProductsData = async () => {
     const {match} = this.props
     const {params} = match
     const {id} = params
 
-    this.setState({apiStatus: apiStatusView.inProgress})
+    this.setState({apiStatus: apiStatusConstants.inProgress})
 
     const jwtToken = Cookies.get('jwt_token')
 
@@ -54,10 +55,7 @@ class ProductItemDetails extends Component {
       },
       method: 'GET',
     }
-    const response = await fetch(
-      `https://localhost:3000/products/${id}`,
-      options,
-    )
+    const response = await fetch(`https://apis.ccbp.in/products/${id}`, options)
     console.log(response)
     if (response.ok) {
       const fetchedData = await response.json()
@@ -67,21 +65,15 @@ class ProductItemDetails extends Component {
         eachProduct => this.getFormattedData(eachProduct),
       )
       this.setState({
+        productData: updatedData,
         similarProducts: updatedSimilarProductsData,
-        productList: updatedData,
-        apiStatus: apiStatusView.success,
+        apiStatus: apiStatusConstants.success,
       })
     }
     if (response.status === 404) {
-      this.setState({apiStatus: apiStatusView.failure})
+      this.setState({apiStatus: apiStatusConstants.failure})
     }
   }
-
-  renderLoadingView = () => (
-    <div data-testid="loader">
-      <Loader type="ThreeDots" color="#0b69ff" height={80} width={80} />
-    </div>
-  )
 
   getFailureView = () => (
     <div>
@@ -90,12 +82,18 @@ class ProductItemDetails extends Component {
         alt="failure view"
         className="error-img"
       />
-      <p>Products Not Found</p>
+      <h1>Product Not Found</h1>
       <Link to="/products">
         <button type="button" className="button">
           Continue Shopping
         </button>
       </Link>
+    </div>
+  )
+
+  renderLoadingView = () => (
+    <div className="loader-element" data-testid="loader">
+      <Loader type="ThreeDots" color="#0b69ff" height={80} width={80} />
     </div>
   )
 
@@ -113,7 +111,7 @@ class ProductItemDetails extends Component {
   }
 
   renderProductViewDetailed = () => {
-    const {productList, quantity, similarProducts} = this.state
+    const {productData, quantity, similarProducts} = this.state
     const {
       availability,
       price,
@@ -123,12 +121,12 @@ class ProductItemDetails extends Component {
       description,
       rating,
       totalReviews,
-    } = productList
+    } = productData
 
     return (
-      <div>
-        <div>
-          <img src={imageUrl} alt="product" />
+      <div className="product-container">
+        <div className="products-data-container">
+          <img src={imageUrl} alt="product" className="product-image" />
           <div>
             <h1>{title}</h1>
             <p>Rs {price}</p>
@@ -173,8 +171,8 @@ class ProductItemDetails extends Component {
             <button type="button">ADD TO CART</button>
           </div>
         </div>
-        <h1>Similar PRoducts</h1>
-        <ul>
+        <h1>Similar Products</h1>
+        <ul className="unordered-list-similar-products">
           {similarProducts.map(eachProduct => (
             <SimilarProductItem
               productDetails={eachProduct}
@@ -190,11 +188,11 @@ class ProductItemDetails extends Component {
     const {apiStatus} = this.state
 
     switch (apiStatus) {
-      case apiStatusView.success:
+      case apiStatusConstants.success:
         return this.renderProductViewDetailed()
-      case apiStatusView.failure:
+      case apiStatusConstants.failure:
         return this.getFailureView()
-      case apiStatusView.inProgress:
+      case apiStatusConstants.inProgress:
         return this.renderLoadingView()
       default:
         return null
@@ -205,7 +203,7 @@ class ProductItemDetails extends Component {
     return (
       <>
         <Header />
-        <div>{this.renderProductView()}</div>
+        <div className="bg-container">{this.renderProductView()}</div>
       </>
     )
   }

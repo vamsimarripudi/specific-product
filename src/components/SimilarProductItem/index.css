@@ -1,1 +1,8 @@
 /* Write your CSS here */
+.similar-photo {
+  height: 100px;
+}
+
+.list-style-product {
+  display: flex;
+}
